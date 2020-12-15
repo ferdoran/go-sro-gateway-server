@@ -2,8 +2,8 @@ package db
 
 import (
 	"database/sql"
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/db"
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/security/hashing"
+	"github.com/ferdoran/go-sro-framework/db"
+	"github.com/ferdoran/go-sro-framework/security/hashing"
 	"time"
 )
 

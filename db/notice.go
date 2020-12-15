@@ -1,7 +1,7 @@
 package db
 
 import (
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/db"
+	"github.com/ferdoran/go-sro-framework/db"
 	"time"
 )
 

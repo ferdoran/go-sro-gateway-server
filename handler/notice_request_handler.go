@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/network"
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/network/opcode"
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/server"
+	"github.com/ferdoran/go-sro-framework/network"
+	"github.com/ferdoran/go-sro-framework/network/opcode"
+	"github.com/ferdoran/go-sro-framework/server"
 	"time"
 
-	"gitlab.ferdoran.de/game-dev/go-sro/gateway-server/db"
+	"github.com/ferdoran/go-sro-gateway-server/db"
 )
 
 type NoticeRequestHandler struct {

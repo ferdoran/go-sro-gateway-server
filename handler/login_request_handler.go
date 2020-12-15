@@ -1,13 +1,13 @@
 package handler
 
 import (
+	"github.com/ferdoran/go-sro-framework/config"
+	"github.com/ferdoran/go-sro-framework/network"
+	"github.com/ferdoran/go-sro-framework/network/opcode"
+	"github.com/ferdoran/go-sro-framework/server"
+	"github.com/ferdoran/go-sro-gateway-server/clients"
+	"github.com/ferdoran/go-sro-gateway-server/db"
 	log "github.com/sirupsen/logrus"
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/config"
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/network"
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/network/opcode"
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/server"
-	"gitlab.ferdoran.de/game-dev/go-sro/gateway-server/clients"
-	"gitlab.ferdoran.de/game-dev/go-sro/gateway-server/db"
 	"math/rand"
 )
 

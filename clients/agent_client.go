@@ -1,11 +1,11 @@
 package clients
 
 import (
+	"github.com/ferdoran/go-sro-framework/client"
+	"github.com/ferdoran/go-sro-framework/config"
+	"github.com/ferdoran/go-sro-framework/network"
+	"github.com/ferdoran/go-sro-framework/network/opcode"
 	"github.com/sirupsen/logrus"
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/client"
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/config"
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/network"
-	"gitlab.ferdoran.de/game-dev/go-sro/framework/network/opcode"
 )
 
 type AgentServerClient struct {
