@@ -1,6 +1,6 @@
 FROM golang:1.15.3-alpine as builder
 RUN mkdir /app
-ADD .github/workflows /app
+ADD . /app
 WORKDIR /app
 RUN go clean --modcache
 RUN GOOS=linux CGO_ENABLED=0 go build -o main .
