@@ -2,16 +2,17 @@ package clients
 
 import (
 	"github.com/ferdoran/go-sro-framework/client"
-	"github.com/ferdoran/go-sro-framework/config"
 	"github.com/ferdoran/go-sro-framework/network"
 	"github.com/ferdoran/go-sro-framework/network/opcode"
+	"github.com/ferdoran/go-sro-gateway-server/config"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	"net"
 )
 
 type AgentServerClient struct {
 	PacketChannel chan network.Packet
 	Connected     bool
-	Config        config.Config
 	*client.BackendClient
 }
 
@@ -23,15 +24,16 @@ type LoginTokenRequest struct {
 	ShardID   uint16
 }
 
-func NewAgentServerClient(config config.Config) *AgentServerClient {
+func NewAgentServerClient() *AgentServerClient {
 	c := client.NewBackendClient(
-		config.AgentServer.IP,
-		config.AgentServer.Port,
-		config.GatewayServer.ModuleID,
-		config.GatewayServer.Secret)
+		net.ParseIP(viper.GetString(config.AgentIp)),
+		viper.GetInt(config.AgentPort),
+		viper.GetString(config.GatewayModuleId),
+		viper.GetString(config.GatewaySecret),
+	)
 	logrus.Infoln("connecting to agent server")
 	c.Connect()
-	ac := AgentServerClient{Config: config, PacketChannel: c.IncomingPacketChannel, BackendClient: c}
+	ac := AgentServerClient{PacketChannel: c.IncomingPacketChannel, BackendClient: c}
 	return &ac
 }
 

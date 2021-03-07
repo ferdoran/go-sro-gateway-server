@@ -2,29 +2,30 @@ package main
 
 import (
 	"bufio"
-	"github.com/ferdoran/go-sro-framework/config"
 	"github.com/ferdoran/go-sro-framework/logging"
 	"github.com/ferdoran/go-sro-framework/network"
 	"github.com/ferdoran/go-sro-framework/server"
 	"github.com/ferdoran/go-sro-gateway-server/clients"
+	"github.com/ferdoran/go-sro-gateway-server/config"
 	"github.com/ferdoran/go-sro-gateway-server/handler"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"math/rand"
+	"net"
 	"os"
 	"time"
 )
 
 type GatewayServer struct {
 	Server            server.Server
-	Config            config.Config
 	failedLogins      map[string]int
 	AgentServerClient *clients.AgentServerClient
 }
 
-func NewGatewayServer(config config.Config) GatewayServer {
-	server := server.NewEngine(
-		config.GatewayServer.IP,
-		config.GatewayServer.Port,
+func NewGatewayServer() GatewayServer {
+	s := server.NewEngine(
+		net.ParseIP(viper.GetString(config.GatewayIp)),
+		viper.GetInt(config.GatewayPort),
 		network.EncodingOptions{
 			None:         false,
 			Disabled:     false,
@@ -33,10 +34,11 @@ func NewGatewayServer(config config.Config) GatewayServer {
 			KeyExchange:  true,
 			KeyChallenge: false,
 		},
-		config)
-	server.ModuleID = config.GatewayServer.ModuleID
-	agentClient := clients.NewAgentServerClient(config)
-	return GatewayServer{server, config, make(map[string]int), agentClient}
+	)
+	s.ModuleID = viper.GetString(config.GatewayModuleId)
+
+	agentClient := clients.NewAgentServerClient()
+	return GatewayServer{s, make(map[string]int), agentClient}
 }
 
 func (g *GatewayServer) Start() {
@@ -49,7 +51,7 @@ func (g *GatewayServer) handlePackets() {
 	handler.NewPatchRequestHandler()
 	handler.NewShardlistRequestHandler()
 	handler.NewShardlistPingHandler()
-	handler.NewLoginRequestHandler(g.Config, g.failedLogins, g.AgentServerClient)
+	handler.NewLoginRequestHandler(g.failedLogins, g.AgentServerClient)
 	handler.NewNoticeRequestHandler()
 	for {
 		data := <-g.Server.PacketChannel
@@ -61,14 +63,14 @@ func (g *GatewayServer) handlePackets() {
 }
 
 func main() {
+	config.Initialize()
 	logging.Init()
 	rand.Seed(time.Now().UnixNano())
 	reader := bufio.NewReader(os.Stdin)
 
 	log.Infoln("Loading Config")
-	config.LoadConfig("config.json")
 	log.Infoln("Starting server...")
-	gw := NewGatewayServer(config.GlobalConfig)
+	gw := NewGatewayServer()
 
 	gw.Start()
 	log.Println("Press Enter to exit...")

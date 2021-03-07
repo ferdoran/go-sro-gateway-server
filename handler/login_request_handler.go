@@ -1,24 +1,24 @@
 package handler
 
 import (
-	"github.com/ferdoran/go-sro-framework/config"
 	"github.com/ferdoran/go-sro-framework/network"
 	"github.com/ferdoran/go-sro-framework/network/opcode"
 	"github.com/ferdoran/go-sro-framework/server"
 	"github.com/ferdoran/go-sro-gateway-server/clients"
+	"github.com/ferdoran/go-sro-gateway-server/config"
 	"github.com/ferdoran/go-sro-gateway-server/db"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"math/rand"
 )
 
 type LoginRequestHandler struct {
-	Config            config.Config
 	FailedLogins      map[string]int
 	AgentServerClient *clients.AgentServerClient
 }
 
-func NewLoginRequestHandler(config config.Config, failedLogins map[string]int, agentClient *clients.AgentServerClient) server.PacketHandler {
-	handler := &LoginRequestHandler{Config: config, FailedLogins: failedLogins, AgentServerClient: agentClient}
+func NewLoginRequestHandler(failedLogins map[string]int, agentClient *clients.AgentServerClient) server.PacketHandler {
+	handler := &LoginRequestHandler{FailedLogins: failedLogins, AgentServerClient: agentClient}
 	server.PacketManagerInstance.RegisterHandler(opcode.LoginRequest, handler)
 	return handler
 }
@@ -55,8 +55,8 @@ func (h *LoginRequestHandler) Handle(packet server.PacketChannelData) {
 		// Valid login
 		p.WriteByte(1)
 		p.WriteUInt32(token) // AgentServer.Token
-		p.WriteString(h.Config.AgentServer.IP.String())
-		p.WriteUInt16(uint16(h.Config.AgentServer.Port))
+		p.WriteString(viper.GetString(config.AgentIp))
+		p.WriteUInt16(uint16(viper.GetInt(config.AgentPort)))
 		h.FailedLogins[username] = 0
 
 	} else {
