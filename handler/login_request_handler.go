@@ -55,7 +55,7 @@ func (h *LoginRequestHandler) Handle(packet server.PacketChannelData) {
 		// Valid login
 		p.WriteByte(1)
 		p.WriteUInt32(token) // AgentServer.Token
-		p.WriteString(viper.GetString(config.AgentIp))
+		p.WriteString(viper.GetString(config.AgentHost))
 		p.WriteUInt16(uint16(viper.GetInt(config.AgentPort)))
 		h.FailedLogins[username] = 0
 

@@ -11,7 +11,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"math/rand"
-	"net"
 	"os"
 	"time"
 )
@@ -24,7 +23,7 @@ type GatewayServer struct {
 
 func NewGatewayServer() GatewayServer {
 	s := server.NewEngine(
-		net.ParseIP(viper.GetString(config.GatewayIp)),
+		viper.GetString(config.GatewayHost),
 		viper.GetInt(config.GatewayPort),
 		network.EncodingOptions{
 			None:         false,

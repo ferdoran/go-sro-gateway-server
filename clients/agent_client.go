@@ -7,7 +7,6 @@ import (
 	"github.com/ferdoran/go-sro-gateway-server/config"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"net"
 )
 
 type AgentServerClient struct {
@@ -26,7 +25,7 @@ type LoginTokenRequest struct {
 
 func NewAgentServerClient() *AgentServerClient {
 	c := client.NewBackendClient(
-		net.ParseIP(viper.GetString(config.AgentIp)),
+		viper.GetString(config.AgentHost),
 		viper.GetInt(config.AgentPort),
 		viper.GetString(config.GatewayModuleId),
 		viper.GetString(config.GatewaySecret),

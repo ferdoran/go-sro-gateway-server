@@ -7,12 +7,12 @@ import (
 )
 
 const (
-	AgentIp       = "agent.ip"
+	AgentHost     = "agent.host"
 	AgentPort     = "agent.port"
 	AgentSecret   = "agent.secret"
 	AgentModuleId = "agent.module_id"
 
-	GatewayIp       = "gateway.ip"
+	GatewayHost     = "gateway.ip"
 	GatewayPort     = "gateway.Port"
 	GatewayModuleId = "gateway.module_id"
 	GatewaySecret   = "gateway.secret"
@@ -28,24 +28,24 @@ func Initialize() {
 }
 
 func bindEnvAliases() {
-	viper.BindEnv(AgentIp, "AGENT_IP")
+	viper.BindEnv(AgentHost, "AGENT_HOST")
 	viper.BindEnv(AgentPort, "AGENT_PORT")
 	viper.BindEnv(AgentSecret, "AGENT_SECRET")
 	viper.BindEnv(AgentModuleId, "AGENT_MODULE_ID")
 
-	viper.BindEnv(GatewayIp, "GATEWAY_IP")
+	viper.BindEnv(GatewayHost, "GATEWAY_HOST")
 	viper.BindEnv(GatewayPort, "GATEWAY_PORT")
 	viper.BindEnv(GatewaySecret, "GATEWAY_SECRET")
 	viper.BindEnv(GatewayModuleId, "GATEWAY_MODULE_ID")
 }
 
 func setDefaultValues() {
-	viper.SetDefault(AgentIp, "127.0.0.1")
+	viper.SetDefault(AgentHost, "127.0.0.1")
 	viper.SetDefault(AgentPort, 15882)
 	viper.SetDefault(AgentSecret, "agent-server")
 	viper.SetDefault(AgentModuleId, "AgentServer")
 
-	viper.SetDefault(GatewayIp, "127.0.0.1")
+	viper.SetDefault(GatewayHost, "127.0.0.1")
 	viper.SetDefault(GatewayPort, 15779)
 	viper.SetDefault(GatewaySecret, "gateway-server")
 	viper.SetDefault(GatewayModuleId, "GatewayServer")
