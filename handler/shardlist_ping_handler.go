@@ -5,6 +5,9 @@ import (
 	"github.com/ferdoran/go-sro-framework/network/opcode"
 	"github.com/ferdoran/go-sro-framework/server"
 	"github.com/ferdoran/go-sro-framework/utils"
+	"github.com/ferdoran/go-sro-gateway-server/config"
+	"github.com/spf13/viper"
+	"net"
 )
 
 type ShardlistPingHandler struct {
@@ -22,8 +25,8 @@ func (h ShardlistPingHandler) Handle(packet server.PacketChannelData) {
 	// TODO can also return an error code
 	p.WriteByte(1) // result = 1 = Successful, else error
 	p.WriteByte(1) // result Farm.ID
-	// TODO how do we want to pass the Farm.IP here?
-	p.WriteUInt32(utils.ByteArrayToUint32([]byte{127, 0, 0, 1})) // Farm.IP
+
+	p.WriteUInt32(utils.ByteArrayToUint32(net.ParseIP(viper.GetString(config.AgentPublicIp)))) // Farm.IP
 
 	packet.Session.Conn.Write(p.ToBytes())
 }

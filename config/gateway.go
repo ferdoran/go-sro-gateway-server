@@ -8,6 +8,7 @@ import (
 
 const (
 	AgentHost     = "agent.host"
+	AgentPublicIp = "agent.public.ip"
 	AgentPort     = "agent.port"
 	AgentSecret   = "agent.secret"
 	AgentModuleId = "agent.module_id"
@@ -29,6 +30,7 @@ func Initialize() {
 
 func bindEnvAliases() {
 	viper.BindEnv(AgentHost, "AGENT_HOST")
+	viper.BindEnv(AgentPublicIp, "AGENT_PUBLIC_IP")
 	viper.BindEnv(AgentPort, "AGENT_PORT")
 	viper.BindEnv(AgentSecret, "AGENT_SECRET")
 	viper.BindEnv(AgentModuleId, "AGENT_MODULE_ID")
@@ -41,6 +43,7 @@ func bindEnvAliases() {
 
 func setDefaultValues() {
 	viper.SetDefault(AgentHost, "127.0.0.1")
+	viper.SetDefault(AgentPublicIp, "127.0.0.1")
 	viper.SetDefault(AgentPort, 15882)
 	viper.SetDefault(AgentSecret, "agent-server")
 	viper.SetDefault(AgentModuleId, "AgentServer")
