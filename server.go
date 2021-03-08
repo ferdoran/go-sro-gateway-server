@@ -64,6 +64,8 @@ func (g *GatewayServer) handlePackets() {
 func main() {
 	config.Initialize()
 	logging.Init()
+
+	log.Info("Agent Public IP: %s", viper.GetString(config.AgentPublicIp))
 	rand.Seed(time.Now().UnixNano())
 	reader := bufio.NewReader(os.Stdin)
 

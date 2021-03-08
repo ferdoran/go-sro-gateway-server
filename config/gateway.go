@@ -8,7 +8,7 @@ import (
 
 const (
 	AgentHost     = "agent.host"
-	AgentPublicIp = "agent.public.ip"
+	AgentPublicIp = "agent.public_ip"
 	AgentPort     = "agent.port"
 	AgentSecret   = "agent.secret"
 	AgentModuleId = "agent.module_id"
