@@ -26,7 +26,7 @@ func (h ShardlistPingHandler) Handle(packet server.PacketChannelData) {
 	p.WriteByte(1) // result = 1 = Successful, else error
 	p.WriteByte(1) // result Farm.ID
 
-	p.WriteUInt32(utils.ByteArrayToUint32(net.ParseIP(viper.GetString(config.AgentPublicIp)))) // Farm.IP
+	p.WriteUInt32(utils.ByteArrayToUint32(net.ParseIP(viper.GetString(config.AgentPublicIp))[12:16])) // Farm.IP
 
 	packet.Session.Conn.Write(p.ToBytes())
 }
