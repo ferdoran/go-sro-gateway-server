@@ -43,5 +43,8 @@ func (h ShardlistRequestHandler) Handle(packet server.PacketChannelData) {
 	}
 	p.WriteByte(0) // Divider / End of Shards
 
-	packet.Session.Conn.Write(p.ToBytes())
+	_, err := packet.Session.Conn.Write(p.ToBytes())
+	if err != nil {
+		log.Panic(err)
+	}
 }
