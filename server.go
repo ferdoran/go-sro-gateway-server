@@ -63,19 +63,18 @@ func (g *GatewayServer) handlePackets() {
 
 func main() {
 	config.Initialize()
-	boot.SetPhases("config", "packethandler")
-	boot.RegisterComponent("config", logging.Init, 1)
+	logging.Init()
+	boot.SetPhases("server", "packethandler")
 	reader := bufio.NewReader(os.Stdin)
 
 	rand.Seed(time.Now().UnixNano())
 
-	log.Infoln("Starting server...")
 	startGameServer := func() {
 		gw := NewGatewayServer()
 		gw.Start()
 	}
 
-	boot.RegisterComponent("packethandler", startGameServer, 1)
+	boot.RegisterComponent("server", startGameServer, 1)
 	boot.Boot()
 	log.Println("Press Enter to exit...")
 	reader.ReadString('\n')
