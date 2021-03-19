@@ -11,22 +11,25 @@ import (
 )
 
 type ShardlistPingHandler struct {
+	channel chan server.PacketChannelData
 }
 
-func NewShardlistPingHandler() server.PacketHandler {
-	handler := ShardlistPingHandler{}
-	server.PacketManagerInstance.RegisterHandler(opcode.ShardlistPing, handler)
-	return handler
+func InitShardlistPingHandler() {
+	handler := ShardlistPingHandler{channel: server.PacketManagerInstance.GetQueue(opcode.ShardlistPing)}
+	go handler.Handle()
 }
 
-func (h ShardlistPingHandler) Handle(packet server.PacketChannelData) {
-	p := network.EmptyPacket()
-	p.MessageID = opcode.ShardlistPong
-	// TODO can also return an error code
-	p.WriteByte(1) // result = 1 = Successful, else error
-	p.WriteByte(1) // result Farm.ID
+func (h *ShardlistPingHandler) Handle() {
+	for {
+		packet := <-h.channel
+		p := network.EmptyPacket()
+		p.MessageID = opcode.ShardlistPong
+		// TODO can also return an error code
+		p.WriteByte(1) // result = 1 = Successful, else error
+		p.WriteByte(1) // result Farm.ID
 
-	p.WriteUInt32(utils.ByteArrayToUint32(net.ParseIP(viper.GetString(config.AgentPublicIp))[12:16])) // Farm.IP
+		p.WriteUInt32(utils.ByteArrayToUint32(net.ParseIP(viper.GetString(config.AgentPublicIp))[12:16])) // Farm.IP
 
-	packet.Session.Conn.Write(p.ToBytes())
+		packet.Session.Conn.Write(p.ToBytes())
+	}
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"github.com/ferdoran/go-sro-framework/boot"
 	"github.com/ferdoran/go-sro-framework/logging"
 	"github.com/ferdoran/go-sro-framework/network"
 	"github.com/ferdoran/go-sro-framework/server"
@@ -35,7 +36,10 @@ func NewGatewayServer() GatewayServer {
 		},
 	)
 	s.ModuleID = viper.GetString(config.GatewayModuleId)
-
+	boot.RegisterComponent("packethandler", handler.InitPatchRequestHandler, 2)
+	boot.RegisterComponent("packethandler", handler.InitShardlistRequestHandler, 2)
+	boot.RegisterComponent("packethandler", handler.InitShardlistPingHandler, 2)
+	boot.RegisterComponent("packethandler", handler.InitNoticeRequestHandler, 2)
 	agentClient := clients.NewAgentServerClient()
 	return GatewayServer{s, make(map[string]int), agentClient}
 }
@@ -46,12 +50,8 @@ func (g *GatewayServer) Start() {
 }
 
 func (g *GatewayServer) handlePackets() {
+	handler.InitLoginRequestHandler(g.failedLogins, g.AgentServerClient)
 
-	handler.NewPatchRequestHandler()
-	handler.NewShardlistRequestHandler()
-	handler.NewShardlistPingHandler()
-	handler.NewLoginRequestHandler(g.failedLogins, g.AgentServerClient)
-	handler.NewNoticeRequestHandler()
 	for {
 		data := <-g.Server.PacketChannel
 		switch data.MessageID {
@@ -63,16 +63,20 @@ func (g *GatewayServer) handlePackets() {
 
 func main() {
 	config.Initialize()
-	logging.Init()
-
-	rand.Seed(time.Now().UnixNano())
+	boot.SetPhases("config", "packethandler")
+	boot.RegisterComponent("config", logging.Init, 1)
 	reader := bufio.NewReader(os.Stdin)
 
-	log.Infoln("Loading Config")
-	log.Infoln("Starting server...")
-	gw := NewGatewayServer()
+	rand.Seed(time.Now().UnixNano())
 
-	gw.Start()
+	log.Infoln("Starting server...")
+	startGameServer := func() {
+		gw := NewGatewayServer()
+		gw.Start()
+	}
+
+	boot.RegisterComponent("packethandler", startGameServer, 1)
+	boot.Boot()
 	log.Println("Press Enter to exit...")
 	reader.ReadString('\n')
 }

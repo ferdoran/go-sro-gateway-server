@@ -9,42 +9,45 @@ import (
 )
 
 type ShardlistRequestHandler struct {
+	channel chan server.PacketChannelData
 }
 
-func NewShardlistRequestHandler() server.PacketHandler {
-	handler := ShardlistRequestHandler{}
-	server.PacketManagerInstance.RegisterHandler(opcode.ShardlistRequest, handler)
-	return handler
+func InitShardlistRequestHandler() {
+	handler := ShardlistRequestHandler{channel: server.PacketManagerInstance.GetQueue(opcode.ShardlistRequest)}
+	go handler.Handle()
 }
 
-func (h ShardlistRequestHandler) Handle(packet server.PacketChannelData) {
-	log.Println("CLIENT_GATEWAY_SHARD_LIST_REQUEST")
-	shards := db.GetShards()
-	// TODO make this configurable
-	// Farm
-	p := network.EmptyPacket()
-	p.MessageID = opcode.ShardlistResponse
+func (h *ShardlistRequestHandler) Handle() {
+	for {
+		packet := <-h.channel
+		log.Println("CLIENT_GATEWAY_SHARD_LIST_REQUEST")
+		shards := db.GetShards()
+		// TODO make this configurable
+		// Farm
+		p := network.EmptyPacket()
+		p.MessageID = opcode.ShardlistResponse
 
-	p.WriteByte(1)                   // hasEntries
-	p.WriteByte(1)                   // Farm.ID
-	p.WriteString("SRO_DEUTSCHLAND") //Farm.Name
+		p.WriteByte(1)                   // hasEntries
+		p.WriteByte(1)                   // Farm.ID
+		p.WriteString("SRO_DEUTSCHLAND") //Farm.Name
 
-	p.WriteByte(0) // Divider / End of Farms
+		p.WriteByte(0) // Divider / End of Farms
 
-	// Shards
-	for _, shard := range shards {
-		p.WriteByte(1)                             // hasEntries
-		p.WriteUInt16(uint16(shard.Id))            // Shard.ID
-		p.WriteString(shard.Name)                  // Shard.Name
-		p.WriteUInt16(uint16(shard.OnlinePlayers)) // Shard.OnlinePlayers
-		p.WriteUInt16(uint16(shard.Capacity))      // Shard.PlayerCapacity
-		p.WriteByte(byte(shard.Status))            // Shard.IsOperating
-		p.WriteByte(1)                             // Shard.FarmID
-	}
-	p.WriteByte(0) // Divider / End of Shards
+		// Shards
+		for _, shard := range shards {
+			p.WriteByte(1)                             // hasEntries
+			p.WriteUInt16(uint16(shard.Id))            // Shard.ID
+			p.WriteString(shard.Name)                  // Shard.Name
+			p.WriteUInt16(uint16(shard.OnlinePlayers)) // Shard.OnlinePlayers
+			p.WriteUInt16(uint16(shard.Capacity))      // Shard.PlayerCapacity
+			p.WriteByte(byte(shard.Status))            // Shard.IsOperating
+			p.WriteByte(1)                             // Shard.FarmID
+		}
+		p.WriteByte(0) // Divider / End of Shards
 
-	_, err := packet.Session.Conn.Write(p.ToBytes())
-	if err != nil {
-		log.Panic(err)
+		_, err := packet.Session.Conn.Write(p.ToBytes())
+		if err != nil {
+			log.Panic(err)
+		}
 	}
 }
