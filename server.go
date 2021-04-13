@@ -64,13 +64,13 @@ func (g *GatewayServer) handlePackets() {
 func main() {
 	config.Initialize()
 	logging.Init()
-	boot.SetPhases("server", "packethandler")
+	boot.SetPhases("packethandler", "server")
 	reader := bufio.NewReader(os.Stdin)
 
 	rand.Seed(time.Now().UnixNano())
 
+	gw := NewGatewayServer()
 	startGameServer := func() {
-		gw := NewGatewayServer()
 		gw.Start()
 	}
 
