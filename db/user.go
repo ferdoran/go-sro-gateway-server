@@ -40,7 +40,7 @@ func GetUserById(userid int) User {
 	var id, status int
 	var username, password, mail string
 	var isGm bool
-	var ctime time.Time
+	var ctime sql.NullTime
 	var utime sql.NullTime
 	if !queryHandle.Next() {
 		// No data available
@@ -56,7 +56,7 @@ func GetUserById(userid int) User {
 		Mail:     mail,
 		Status:   status,
 		IsGm:     isGm,
-		Ctime:    ctime,
+		Ctime:    ctime.Time,
 		Utime:    utime.Time,
 	}
 
